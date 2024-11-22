@@ -1,41 +1,67 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>???</title>
+    <title>:)</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #ffffff, #ff69b4);
-            background-size: 400% 400%;
-            animation: gradientBG 8s ease infinite;
+            overflow: hidden;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
             user-select: none;
-            pointer-events: none;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .heart {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            transform: rotate(-45deg);
+            animation: floatUp 4s ease-in-out infinite;
         }
 
-        #countdown {
-            font-size: 2rem;
-            color: rgb(255, 255, 255);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-            pointer-events: auto;
+        .heart::before, .heart::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 50px;
+        }
+
+        .heart::before {
+            top: -25px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 25px;
+            top: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(600px) scale(1) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(2.5) rotate(-45deg);
+                opacity: 0;
+            }
         }
 
         .circle {
             position: absolute;
             border-radius: 50%;
             background: transparent;
-            border: 8px solid rgba(255, 105, 180, 0.8);
+            border: 8px solid red;
             transform: scale(0);
             animation: expandFade 0.5s ease-out forwards;
             pointer-events: none;
@@ -48,14 +74,53 @@
             }
         }
 
+        header {
+            text-align: center;
+            color: red;
+            font-size: 25px;
+        }
+
+        h2 {
+            text-align: center;
+            color: black;
+            font-size: 20px;
+        }
+
+        #countdown {
+            font-size: 5rem;
+            color: red;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            pointer-events: auto;
+        }
+
+        .envelope {
+            position: absolute;
+            width: 50px;
+            height: 30px;
+            background-color: white;
+            border: 2px solid black;
+            transform: translateY(0) rotate(0deg);
+            animation: floatUp 4s ease-in-out infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: black;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
     </style>
 </head>
 <body>
-
     <div id="countdown"></div>
 
     <script>
-        const targetDate = new Date('June 1, 2025 00:00:00').getTime();
+        const targetDate = new Date('May 31, 2025 00:00:00').getTime();
 
         const countdownInterval = setInterval(function() {
             const now = new Date().getTime();
@@ -71,28 +136,12 @@
 
             if (distance < 0) {
                 clearInterval(countdownInterval);
-                document.getElementById("countdown").innerHTML = "Happy Birthday!";
+                document.getElementById("countdown").innerHTML = "Happy Birthday!\nคำใบ้ : ต่างจากพวก";
                 setTimeout(function() {
-                    window.location.href = "https://index1-sylraz-xs-projects.vercel.app/";
+                    createWhiteEnvelope();
                 }, 2000);
             }
         }, 1000);
-
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                e.preventDefault();
-            }
-        });
-
-        document.addEventListener('mousedown', function(e) {
-            if (e.button === 0) {
-                e.preventDefault();
-            }
-        });
 
         document.addEventListener('click', (event) => {
             const circle = document.createElement('div');
@@ -108,8 +157,84 @@
             }, 500);
         });
 
-        function fadeLink(link) {
-            link.classList.add('clicked');
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 4000);
+        }
+
+        setInterval(createHeart, 250);
+
+        function createWhiteEnvelope() {
+            const envelope = document.createElement('div');
+            envelope.className = 'envelope';
+            envelope.style.left = Math.random() * 100 + 'vw';
+            envelope.style.top = '100vh';
+
+            envelope.addEventListener('click', () => {
+                openCustomNotification();
+                envelope.remove();
+            });
+
+            document.body.appendChild(envelope);
+
+            setTimeout(() => {
+                envelope.remove();
+            }, 10000);
+        }
+
+        let messageIndex = 0;
+        let isCooldown = false;
+
+        function openCustomNotification() {
+            if (isCooldown) return;
+
+            const messages = [
+                'ถ้าพี่ได้อ่าน ผมจะบอกว่า ผมชอบพี่นะ แต่..\nผมไม่มีเวลาให้ ผมกลัวว่าถ้าเราคบกันมันจะอยู่ได้ไม่นาน\nแน่นอนว่าถ้าพี่ได้เห็นข้อความนี้ พี่คงจะมีคนคบไปแล้ว\nก็ดีแล้วแหละ ผมก็ขอให้เค้าดูแลพี่ดีกว่าผมนะ\nบางทีข้อความนี้อาจจะเป็นข้อความสุดท้ายที่ผมจะเขียนเอาไว้\nและหวังว่าพี่จะอ่านจนจบ\nสุขสันต์วันเกิดคับ ขอให้มีความสุขมากๆ 01/06',
+            ];
+
+            const message = messages[messageIndex];
+            
+            const notification = document.createElement('div');
+            notification.innerText = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '250px';
+            notification.style.left = '50%';
+            notification.style.textAlign = 'center';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.backgroundColor = 'red';
+            notification.style.color = 'white';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '5px';
+            notification.style.fontSize = '18px';
+            notification.style.zIndex = '1000';
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 1s ease';
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '1';
+            }, 10);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 1000);
+            }, 25000);
+
+            messageIndex = (messageIndex + 1) % messages.length;
+
+            isCooldown = true;
+            setTimeout(() => {
+                isCooldown = false;
+            }, 3000);
         }
     </script>
 </body>
